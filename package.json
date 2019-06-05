@@ -1,6 +1,6 @@
 {
   "name": "vue-routes-auto-webpack",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "根据指定目录自动生成 vue-router 路由配置",
   "author": "mingdev <mingdev@163.com>",
   "license": "MIT",
@@ -31,18 +31,15 @@
     "glob-base": "^0.3.0",
     "hash-sum": "^1.0.2",
     "js-beautify": "^1.10.0",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.10",
+    "watch": "^1.0.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
     "cross-env": "^5.2.0",
-    "rimraf": "^2.6.3",
-    "webpack": "^4.4.0"
-  },
-  "peerDependencies": {
-    "webpack": "^4.4.0"
+    "rimraf": "^2.6.3"
   },
   "engines": {
     "node": ">= 6.9.0"

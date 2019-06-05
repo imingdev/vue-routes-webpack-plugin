@@ -12,8 +12,10 @@ module.exports = {
   layouts: resolve('src/layouts/**/index.vue'),
   //布局名称
   layoutName: null,
-  //导入前缀
-  importPrefix: '@',
+  //页面导入前缀
+  pageImportPrefix: '@/pages',
+  //布局导入前缀
+  layoutImportPrefix: '@/layouts',
   //是否是异步加载路由
   dynamicImport: false,
   //是否是动态路由，动态路由不导出默认设置

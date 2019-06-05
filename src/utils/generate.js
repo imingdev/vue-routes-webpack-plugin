@@ -2,12 +2,12 @@ const {getComponentName, getRouteName} = require('./index')
 
 //生成import
 exports.generateImports = imports => {
-  return imports.map(({attrs: {dynamicImport, webpackChunkName}, routePath, realPath, relativePath}) => {
+  return imports.map(({attrs: {dynamicImport, webpackChunkName}, routePath, realPath, importPath}) => {
     const componentName = getComponentName(realPath)
     if (dynamicImport) {
-      return `const ${componentName} = () => import(/* webpackChunkName: "${webpackChunkName || routePath}" */ '${relativePath}')`
+      return `const ${componentName} = () => import(/* webpackChunkName: "${webpackChunkName || routePath}" */ '${importPath}')`
     } else {
-      return `import ${componentName} from '${relativePath}'`
+      return `import ${componentName} from '${importPath}'`
     }
   })
 }
@@ -35,7 +35,6 @@ exports.generateDefaultRoute = pageArr => {
   const noLayoutPageArr = pageArr.filter(({attrs: {layoutName}, type}) => (!layoutName && type === 'page'))
   //得到有layout的路由数组
   const layoutPageArr = pageArr.filter(({attrs: {layoutName}, type}) => (!!layoutName && type === 'page'))
-
 
   _result = noLayoutPageArr.map(({name}) => name)
 

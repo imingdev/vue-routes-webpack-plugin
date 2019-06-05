@@ -25,23 +25,25 @@ exports.parsedVueTemplate = path => {
 }
 
 //匹配路径
-exports.parsedGlobPattern = ({pages, layouts, dynamicImport, dynamicRoute, importPrefix}) => {
+exports.parsedGlobPattern = ({pages, layouts, dynamicImport, dynamicRoute, layoutName, pageImportPrefix, layoutImportPrefix}) => {
   const patternPath = (pattern, type) => {
     let _result = []
     if (!pattern) return _result
 
     return glob.sync(pattern).map(item => {
       const globBase = globBasePlugin(pattern).base
-      const prefix = importPrefix + globBase.replace(__dirname, '').split(path.sep).join('/')
+      const isLayout = type === 'layout'
+      const prefix = isLayout ? layoutImportPrefix : pageImportPrefix
+
       const relativePath = path.relative(globBase, item).split(path.sep).join('/').replace(/\/?index.vue/, '')
 
       return {
         type,
-        name: getRouteName((relativePath ? relativePath : 'index') + (type === 'layout' ? '/layout' : '')),
-        relativePath: prefix + (relativePath ? `/${relativePath}` : ''),
+        name: getRouteName((relativePath ? relativePath : 'index') + (isLayout ? '/layout' : '')),
+        importPath: prefix + (relativePath ? `/${relativePath}` : ''),
         realPath: item,
         routePath: `/${relativePath.replace(/_/g, ':')}`,
-        attrs: {...{dynamicImport, dynamicRoute}, ...exports.parsedVueTemplate(item)}
+        attrs: {...{dynamicImport, dynamicRoute, layoutName}, ...exports.parsedVueTemplate(item)}
       }
     })
   }

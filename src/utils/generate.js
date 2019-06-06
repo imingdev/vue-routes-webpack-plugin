@@ -14,14 +14,18 @@ exports.generateImports = imports => {
 
 //生成路由对象
 exports.generateRouteObjects = objects => {
-  return objects.map(({realPath, name, routePath, type, attrs: {meta}}) => {
+  return objects.map(({realPath, name, routePath, type, attrs: {meta, path, redirect, alias}}) => {
     const componentName = getComponentName(realPath)
+    const isLayout = type === 'layout'
+
+    const _redirect = redirect ? `,\n redirect: '${redirect}'` : ''
+    const _alias = alias ? `,\n alias: '${alias}'` : ''
     const _meta = meta ? `,\n meta: ${JSON.stringify(meta)}` : ''
 
     return `export const ${name} = {
       name: ${componentName}.name,
-      path: '${type === 'layout' ? '' : routePath}',
-      component: ${componentName}${_meta}
+      path: '${isLayout ? '' : (path ? path : routePath)}',
+      component: ${componentName}${_redirect}${_alias}${_meta}
      }`
   })
 }
@@ -43,7 +47,7 @@ exports.generateDefaultRoute = pageArr => {
     return _result
   }
 
-  layoutArr.forEach(({name, attrs: {meta}}) => {
+  layoutArr.forEach(({name, attrs: {meta, redirect, alias}}) => {
     let childrenArr = []
     layoutPageArr.forEach(({name: pageName, attrs: {layoutName}}) => {
       if (name === getRouteName(`/${layoutName}/layout`)) {
@@ -51,13 +55,15 @@ exports.generateDefaultRoute = pageArr => {
       }
     })
     if (childrenArr.length) {
+      const _redirect = redirect ? `,\n redirect: ${name}.redirect` : ''
+      const _alias = alias ? `,\n alias: ${name}.alias` : ''
       const _meta = meta ? `,\n meta: ${name}.meta` : ''
       const _children = `,\n children: [${childrenArr}]`
 
       _result.push(`{
         name: ${name}.name,
         path: ${name}.path,
-        component: ${name}.component${_meta}${_children}
+        component: ${name}.component${_redirect}${_alias}${_meta}${_children}
       }`)
     }
   })

@@ -4,7 +4,7 @@ const {isString} = require('./utils')
 const defaultConfig = require('./utils/config')
 const GenerateRoutes = require('./route')
 const hash = require('hash-sum')
-const watch = require('watch')
+const chokidar = require('chokidar')
 const globBasePlugin = require('glob-base')
 
 const resolve = dir => path.resolve(__dirname, '../..', dir)
@@ -27,34 +27,38 @@ module.exports = class VueRoutesAutoWebpack {
   apply(compiler) {
     const generate = this.generate.bind(this)
     const name = this.constructor.name
+    const {pages, layouts} = this.config
+    const pagesBase = globBasePlugin(pages).base
+    const layoutsBase = layouts ? globBasePlugin(layouts).base : null
+    const isDevelopment = (process.env.NODE_ENV || 'development') === 'development'
+
     if (compiler.hooks) {
       // Support Webpack >= 4
       compiler.hooks.run.tap(name, generate)
-      compiler.hooks.watchRun.tap(name, generate)
     } else {
       // Support Webpack < 4
       compiler.plugin('run', generate)
-      compiler.plugin("watch-run", generate)
     }
 
-    process.env.NODE_ENV === 'development' && Promise.resolve()
-      .then(() => {
-        watch.createMonitor(globBasePlugin(this.config.pages).base, monitor => {
-          monitor.on('created', () => {
-            generate(null, null)
-          })
-        })
+    if (isDevelopment) {
+      //监听文件改变重新生成
+      Promise.resolve().then(() => {
+        chokidar
+          .watch(layoutsBase ? [pagesBase, layoutsBase] : pagesBase)
+          .on('add', generate)
+          .on('change', generate)
+          .on('unlink', generate)
       })
+    }
   }
 
-  generate(compilation, callback) {
+  generate() {
     const code = GenerateRoutes(this.config)
     const output = this.config.output
+    const encoding = 'utf8'
 
-    if (!existsSync(output) || hash(readFileSync(output, 'utf8')) !== hash(code)) {
-      writeFileSync(output, code, {encoding: 'utf8'})
+    if (!existsSync(output) || hash(readFileSync(output, encoding)) !== hash(code)) {
+      writeFileSync(output, code, {encoding})
     }
-
-    callback && callback()
   }
 }

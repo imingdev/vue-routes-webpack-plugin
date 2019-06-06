@@ -4,6 +4,7 @@ const VueTemplateCompiler = require('vue-template-compiler')
 const glob = require('glob')
 const globBasePlugin = require('glob-base')
 const {getRouteName} = require('./index')
+const JSON5 = require('json5')
 
 //解析vue文件
 exports.parsedVueTemplate = path => {
@@ -16,7 +17,7 @@ exports.parsedVueTemplate = path => {
 
   if (routeConfigBlock) {
     try {
-      _result = JSON.parse(routeConfigBlock.content)
+      _result = JSON5.parse(routeConfigBlock.content)
     } catch (err) {
       _result = {}
     }

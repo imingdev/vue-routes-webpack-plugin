@@ -32,9 +32,9 @@ exports.generateDefaultRoute = pageArr => {
   //得到layout
   const layoutArr = pageArr.filter(({type}) => type === 'layout')
   //得到没有layout的路由
-  const noLayoutPageArr = pageArr.filter(({attrs: {layoutName}, type}) => (!layoutName && type === 'page'))
+  const noLayoutPageArr = pageArr.filter(({attrs: {layoutName, dynamicRoute}, type}) => ((!layoutName && !dynamicRoute) && type === 'page'))
   //得到有layout的路由数组
-  const layoutPageArr = pageArr.filter(({attrs: {layoutName}, type}) => (!!layoutName && type === 'page'))
+  const layoutPageArr = pageArr.filter(({attrs: {layoutName, dynamicRoute}, type}) => ((!!layoutName && !dynamicRoute) && type === 'page'))
 
   _result = noLayoutPageArr.map(({name}) => name)
 

@@ -32,27 +32,23 @@ module.exports = class VueRoutesAutoWebpack {
     const layoutsBase = layouts ? globBasePlugin(layouts).base : null
     const isDevelopment = (process.env.NODE_ENV || 'development') === 'development'
 
-    const doneHandler = (compilation, callback) => {
-      if (isDevelopment) {
-        //监听文件改变重新生成
+    if (compiler.hooks) {
+      // Support Webpack >= 4
+      compiler.hooks.run.tap(name, generate)
+    } else {
+      // Support Webpack < 4
+      compiler.plugin('run', generate)
+    }
+
+    //监听文件改变重新生成
+    isDevelopment && Promise.resolve()
+      .then(() => {
         chokidar
           .watch(layoutsBase ? [pagesBase, layoutsBase] : pagesBase, {ignoreInitial: true})
           .on('add', generate)
           .on('change', generate)
           .on('unlink', generate)
-      }
-      callback && callback()
-    }
-
-    if (compiler.hooks) {
-      // Support Webpack >= 4
-      compiler.hooks.done.tap(name, doneHandler)
-    } else {
-      // Support Webpack < 4
-      compiler.plugin('done', doneHandler)
-    }
-
-    generate()
+      })
   }
 
   generate() {

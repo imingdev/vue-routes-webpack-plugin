@@ -1,6 +1,6 @@
 {
   "name": "vue-routes-auto-webpack",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "根据指定目录自动生成 vue-router 路由配置",
   "author": "mingdev <mingdev@163.com>",
   "license": "MIT",

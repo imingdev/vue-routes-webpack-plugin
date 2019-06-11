@@ -51,7 +51,7 @@ module.exports = class VueRoutesAutoWebpack {
       })
   }
 
-  generate() {
+  generate(compilation, callback) {
     const code = GenerateRoutes(this.config)
     const output = this.config.output
     const encoding = 'utf8'
@@ -59,5 +59,7 @@ module.exports = class VueRoutesAutoWebpack {
     if (!existsSync(output) || hash(readFileSync(output, encoding)) !== hash(code)) {
       writeFileSync(output, code, {encoding})
     }
+
+    callback && callback()
   }
 }

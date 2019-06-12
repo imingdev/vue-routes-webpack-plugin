@@ -34,10 +34,10 @@ module.exports = class VueRoutesAutoWebpack {
 
     if (compiler.hooks) {
       // Support Webpack >= 4
-      compiler.hooks.run.tap(name, generate)
+      compiler.hooks.compile.tap(name, generate)
     } else {
       // Support Webpack < 4
-      compiler.plugin('run', generate)
+      compiler.plugin('compile', generate)
     }
 
     //监听文件改变重新生成
@@ -51,7 +51,7 @@ module.exports = class VueRoutesAutoWebpack {
       })
   }
 
-  generate(compilation, callback) {
+  generate() {
     const code = GenerateRoutes(this.config)
     const output = this.config.output
     const encoding = 'utf8'
@@ -59,7 +59,5 @@ module.exports = class VueRoutesAutoWebpack {
     if (!existsSync(output) || hash(readFileSync(output, encoding)) !== hash(code)) {
       writeFileSync(output, code, {encoding})
     }
-
-    callback && callback()
   }
 }

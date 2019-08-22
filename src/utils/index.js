@@ -33,3 +33,16 @@ exports.getRouteName = (path) => {
 
 //获取组件名称
 exports.getComponentName = path => `_${hash(path)}`
+
+// 函数防抖
+exports.debounce = (func, wait = 500) => {
+  let timeout;
+  return function () {
+    let context = this;
+    let args = arguments;
+
+    if (timeout) clearTimeout(timeout);
+
+    timeout = setTimeout(() => func.apply(context, args), wait);
+  }
+}

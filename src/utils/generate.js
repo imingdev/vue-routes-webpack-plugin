@@ -30,21 +30,20 @@ exports.generateRouteObjects = objects => {
   })
 }
 
-//生成默认的路由对象
-exports.generateDefaultRoute = pageArr => {
-  let _result = []
+// 生成导出路由数组
+const generateImportRoutes = (pageArr, isDynamicRoute = false) => {
   //得到layout
   const layoutArr = pageArr.filter(({type}) => type === 'layout')
   //得到没有layout的路由
-  const noLayoutPageArr = pageArr.filter(({attrs: {layoutName, dynamicRoute}, type}) => ((!layoutName && !dynamicRoute) && type === 'page'))
+  const noLayoutPageArr = pageArr.filter(({attrs: {layoutName, dynamicRoute}, type}) => ((!layoutName && dynamicRoute === isDynamicRoute) && type === 'page'))
   //得到有layout的路由数组
-  const layoutPageArr = pageArr.filter(({attrs: {layoutName, dynamicRoute}, type}) => ((!!layoutName && !dynamicRoute) && type === 'page'))
+  const layoutPageArr = pageArr.filter(({attrs: {layoutName, dynamicRoute}, type}) => ((!!layoutName && dynamicRoute === isDynamicRoute) && type === 'page'))
 
-  _result = noLayoutPageArr.map(({name}) => name)
+  let _result = noLayoutPageArr.map(({name}) => name)
 
   if (!layoutPageArr.length) {
     //如果没有布局的页面直接返回
-    return _result
+    return _result;
   }
 
   layoutArr.forEach(({name, attrs: {meta, redirect, alias}}) => {
@@ -70,3 +69,9 @@ exports.generateDefaultRoute = pageArr => {
 
   return _result
 }
+
+//生成默认的路由对象
+exports.generateDefaultRoute = pageArr => generateImportRoutes(pageArr, false)
+
+// 生成异步的路由对象
+exports.generateAsyncRoute = pageArr => generateImportRoutes(pageArr, true)

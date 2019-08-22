@@ -18,6 +18,6 @@ module.exports = {
   layoutImportPrefix: '@/layouts',
   //是否是异步加载路由
   dynamicImport: false,
-  //是否是动态路由，动态路由不导出默认设置
+  //是否是动态路由
   dynamicRoute: false
 }

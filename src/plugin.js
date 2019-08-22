@@ -1,6 +1,6 @@
 const path = require('path')
 const {existsSync, readFileSync, writeFileSync} = require('fs')
-const {isString} = require('./utils')
+const {isString, debounce} = require('./utils')
 const defaultConfig = require('./utils/config')
 const GenerateRoutes = require('./route')
 const hash = require('hash-sum')
@@ -25,7 +25,7 @@ module.exports = class VueRoutesAutoWebpack {
    * @param compiler
    */
   apply(compiler) {
-    const generate = this.generate.bind(this)
+    const generate = debounce(this.generate.bind(this))
     const name = this.constructor.name
     const {pages, layouts} = this.config
     const pagesBase = globBasePlugin(pages).base
